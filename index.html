@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Skybox with Rotating Camera</title>
+    <title>SnackBag GeoGuesser</title>
     <style>
         body { margin: 0; overflow: hidden; }
         canvas { display: block; }
@@ -12,28 +12,31 @@
 <body>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script>
-        // 2. Initialize the scene, camera, and renderer
+        // Initialization
         let scene = new THREE.Scene();
         let camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
         let renderer = new THREE.WebGLRenderer();
         renderer.setSize(window.innerWidth, window.innerHeight);
         document.body.appendChild(renderer.domElement);
 
-        // 3. Create the Skybox
+        // Skybox
         let loader = new THREE.CubeTextureLoader();
         let texture = loader.load([
-            'posx.png', 'negx.png',
-            'posy.png', 'negy.png',
-            'posz.png', 'negz.png'
+            './skybox/posx.png', './skybox/negx.png',
+            './skybox/posy.png', './skybox/negy.png',
+            './skybox/posz.png', './skybox/negz.png'
         ]);
         scene.background = texture;
 
-        // 4. Set up the camera controls for rotation
+        // Camera controls
         let controls = {
             isDragging: false,
             previousX: 0,
             previousY: 0
         };
+
+        let pitch = 0;
+        let yaw = 0; 
 
         window.addEventListener('mousedown', function (event) {
             controls.isDragging = true;
@@ -43,11 +46,21 @@
 
         window.addEventListener('mousemove', function (event) {
             if (!controls.isDragging) return;
+
             let deltaX = event.clientX - controls.previousX;
             let deltaY = event.clientY - controls.previousY;
 
-            camera.rotation.y += deltaX * 0.0025;
-            camera.rotation.x += deltaY * 0.0025;
+            yaw -= deltaX * 0.0025;
+            pitch -= deltaY * 0.0025;
+
+            pitch = Math.max(-Math.PI / 2 + 0.01, Math.min(Math.PI / 2 - 0.01, pitch));
+
+            const direction = new THREE.Vector3();
+            direction.x = Math.cos(pitch) * Math.sin(yaw);
+            direction.y = Math.sin(pitch);
+            direction.z = Math.cos(pitch) * Math.cos(yaw);
+
+            camera.lookAt(camera.position.clone().add(direction));
 
             controls.previousX = event.clientX;
             controls.previousY = event.clientY;
@@ -57,17 +70,14 @@
             controls.isDragging = false;
         });
 
-        // 5. Adjust the camera position
-        camera.position.set(0, 0, 0.1); // Position camera slightly above center
+        camera.position.set(0, 0, 0.1);
 
-        // 6. Resize the canvas on window resize
         window.addEventListener('resize', function () {
             renderer.setSize(window.innerWidth, window.innerHeight);
             camera.aspect = window.innerWidth / window.innerHeight;
             camera.updateProjectionMatrix();
         });
 
-        // 7. Animation loop
         function animate() {
             requestAnimationFrame(animate);
             renderer.render(scene, camera);
