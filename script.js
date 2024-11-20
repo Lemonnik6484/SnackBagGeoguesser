@@ -18,12 +18,15 @@ scene.background = texture;
 let controls = {
     isDragging: false,
     previousX: 0,
-    previousY: 0
+    previousY: 0,
+    touchStartX: 0,
+    touchStartY: 0
 };
 
 let pitch = 0;
 let yaw = 0; 
 
+// Mouse events for desktop
 window.addEventListener('mousedown', function (event) {
     controls.isDragging = true;
     controls.previousX = event.clientX;
@@ -68,6 +71,41 @@ window.addEventListener('mousemove', function (event) {
 });
 
 window.addEventListener('mouseup', function () {
+    controls.isDragging = false;
+});
+
+// Touch events for mobile
+window.addEventListener('touchstart', function (event) {
+    if (event.touches.length === 1) {
+        controls.isDragging = true;
+        controls.touchStartX = event.touches[0].clientX;
+        controls.touchStartY = event.touches[0].clientY;
+    }
+});
+
+window.addEventListener('touchmove', function (event) {
+    if (!controls.isDragging || event.touches.length !== 1) return;
+
+    let deltaX = event.touches[0].clientX - controls.touchStartX;
+    let deltaY = event.touches[0].clientY - controls.touchStartY;
+
+    yaw -= deltaX * 0.0025;
+    pitch -= deltaY * 0.0025;
+
+    pitch = Math.max(-Math.PI / 2 + 0.01, Math.min(Math.PI / 2 - 0.01, pitch));
+
+    const direction = new THREE.Vector3();
+    direction.x = Math.cos(pitch) * Math.sin(yaw);
+    direction.y = Math.sin(pitch);
+    direction.z = Math.cos(pitch) * Math.cos(yaw);
+
+    camera.lookAt(camera.position.clone().add(direction));
+
+    controls.touchStartX = event.touches[0].clientX;
+    controls.touchStartY = event.touches[0].clientY;
+});
+
+window.addEventListener('touchend', function () {
     controls.isDragging = false;
 });
 
