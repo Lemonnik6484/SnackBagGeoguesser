@@ -30,6 +30,21 @@ window.addEventListener('mousedown', function (event) {
     controls.previousY = event.clientY;
 });
 
+let deltaX = controls.previousX;
+let deltaY = controls.previousY;
+
+yaw -= deltaX * 0.0025;
+pitch -= deltaY * 0.0025;
+
+pitch = Math.max(-Math.PI / 2 + 0.01, Math.min(Math.PI / 2 - 0.01, pitch));
+
+const direction = new THREE.Vector3();
+direction.x = Math.cos(pitch) * Math.sin(yaw);
+direction.y = Math.sin(pitch);
+direction.z = Math.cos(pitch) * Math.cos(yaw);
+
+camera.lookAt(camera.position.clone().add(direction));
+
 window.addEventListener('mousemove', function (event) {
     if (!controls.isDragging) return;
 
