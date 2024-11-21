@@ -113,6 +113,15 @@ window.addEventListener('touchend', function () {
     controls.isDragging = false;
 });
 
+// Zoom
+window.addEventListener('wheel', function (event) {
+    camera.fov += event.deltaY * 0.05;
+    camera.fov = Math.max(10, Math.min(75, camera.fov));
+    camera.updateProjectionMatrix();
+});
+
+// Rest of Initialization
+
 camera.position.set(0, 0, 0.1);
 
 window.addEventListener('resize', function () {
