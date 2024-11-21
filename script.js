@@ -1,3 +1,7 @@
+// Config
+const skyboxes_location = "./skyboxes/";
+const game_location = "Timberland";
+
 // Initialization
 let scene = new THREE.Scene();
 let camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
@@ -8,9 +12,9 @@ document.body.appendChild(renderer.domElement);
 // Skybox
 let loader = new THREE.CubeTextureLoader();
 let texture = loader.load([
-    './skybox/posx.png', './skybox/negx.png',
-    './skybox/posy.png', './skybox/negy.png',
-    './skybox/posz.png', './skybox/negz.png'
+    `${skyboxes_location}${game_location}/panorama_1.png`,/* X+ */ `${skyboxes_location}${game_location}/panorama_3.png`, /* X- */
+    `${skyboxes_location}${game_location}/panorama_4.png`,/* Y+ */ `${skyboxes_location}${game_location}/panorama_5.png`, /* Y- */
+    `${skyboxes_location}${game_location}/panorama_0.png`,/* Z+ */ `${skyboxes_location}${game_location}/panorama_2.png`  /* Z- */
 ]);
 scene.background = texture;
 
