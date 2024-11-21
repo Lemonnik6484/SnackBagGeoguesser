@@ -55,7 +55,7 @@ window.addEventListener('mousemove', function (event) {
     let deltaY = event.clientY - controls.previousY;
 
     yaw += deltaX * 0.0025;
-    pitch -= deltaY * 0.0025;
+    pitch += deltaY * 0.0025;
 
     pitch = Math.max(-Math.PI / 2 + 0.01, Math.min(Math.PI / 2 - 0.01, pitch));
 
@@ -90,7 +90,7 @@ window.addEventListener('touchmove', function (event) {
     let deltaY = event.touches[0].clientY - controls.touchStartY;
 
     yaw += deltaX * 0.0025;
-    pitch -= deltaY * 0.0025;
+    pitch += deltaY * 0.0025;
 
     pitch = Math.max(-Math.PI / 2 + 0.01, Math.min(Math.PI / 2 - 0.01, pitch));
 
