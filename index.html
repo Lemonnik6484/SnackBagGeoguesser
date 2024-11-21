@@ -4,17 +4,38 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SnackBag GeoGuesser</title>
-    <link rel="stylesheet" href="./style.css">
+    <link rel="stylesheet" href="../style.css">
+
+    <!--GoogleFonts-->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Funnel+Display:wght@300..800&family=VT323&display=swap" rel="stylesheet">
 
     <!--OpenGraphProtocol-->
     <meta content="SnackBag Geoguesser" property="og:title"/>
     <meta content="This is Geoguesser like game with SnackBag locations" property="og:description"/>
-    <meta property="og:url" content=""/>
+    <meta property="og:url" content="https://lemonnik6484.github.io/SnackBagGeoguesser/"/>
     <meta property="og:image" content=""/>
     <meta content="#48c9b0" data-react-helmet="true" name="theme-color"/>
 </head>
-<body>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<body id="mainpage-body">
+    <header>
+        <img id="logo" src="./logo.png">
+
+        <div id="account-data">
+            <a href="./login" id="login-mainpage-link">
+                <div id="login-mainpage-button">Log in</div>
+            </a>
+        </div>
+    </header>
+    <div id="canvas">
+
+        <div id="central-menu">
+            <img id="character" src="./characters/JX_Snack.png">
+            <a id="play-link" href="./game/"><div id="play-button">PLAY</div></a>
+        </div>
+
+    </div>
     <script src="./script.js"></script>
 </body>
 </html>

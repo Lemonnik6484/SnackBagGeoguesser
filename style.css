@@ -1,8 +1,90 @@
+:root {
+    --main-color: #001824;
+    --secondary-color: #fff3bd;
+    --main-bg-color: #000000;
+    --secondary-bg-color: #001824;
+  }
+  
+
 body {
     margin: 0;
     overflow: hidden;
+    background-color: var(--main-bg-color);
+}
+
+#mainpage-body {
+    background-image: url("./sky_full_of_stars.png");
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    height: 100vh;
+    width: 100vw;
 }
 
 canvas {
     display: block;
+}
+
+#canvas {
+    display: flex;
+    justify-content: center;
+}
+
+header {
+    background-color: var(--secondary-bg-color);
+    box-shadow: inset 0px -10px 10px 0px var(--main-bg-color);
+    height: 75px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#logo {
+    height: 100px;
+    width: 400px;
+    margin-bottom: 12px;
+    margin-left: 15px;
+}
+
+#account-data {
+    display: flex;
+    flex-direction: row;
+    margin-bottom: 12px;
+    margin-right: 15px;
+}
+
+a {
+    text-decoration: none;
+    color: unset;
+}
+
+#login-mainpage-link {
+    text-decoration: none;
+    color: rgb(0, 0, 0);
+}
+
+#login-mainpage-button {
+    border-radius: 50px;
+    width: 100px;
+    background: linear-gradient(135deg, #ffa909, #fff3bd);
+    font-family: "Funnel Display", sans-serif;
+    text-align: center;
+}
+
+#central-menu {
+    display: flex;
+    justify-items: center;
+    flex-direction: column;
+}
+
+#character {
+    height: 512px;
+    width: 512px;
+    filter: drop-shadow(0px 0px 10px #ffffff);
+}
+
+#play-button {
+    color: #fff;
+    text-align: center;
 }
