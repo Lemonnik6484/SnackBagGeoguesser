@@ -1,4 +1,5 @@
-import { POST, GET_AccountData } from "../networking.js"
+import { POST } from "../networking.js"
+import { showNotification } from "../notifications.js";
 
 let login_switch = document.getElementById("login-switch");
 let login_switch_text = document.getElementById("login-switch-text");
@@ -33,18 +34,11 @@ document.getElementById('login-form').addEventListener('submit', function (event
 
     if (nickname && password) {
         if (mode === "login") {
-            const logged = POST("login", nickname, undefined, undefined, undefined, password);
-            if (logged) {
-                localStorage.setItem("token", btoa(nickname)+"|"+btoa(password))
-            }
+            POST("login", nickname, undefined, undefined, undefined, password);
         } else {
             POST("register", nickname, undefined, undefined, undefined, password);
-            const logged = POST("login", nickname, undefined, undefined, undefined, password);
-            if (logged) {
-                localStorage.setItem("token", btoa(nickname)+"|"+btoa(password))
-            }
         }
     } else {
-        alert('Please fill out all fields');
+        showNotification("failure", "Please fill out all fields!")
     }
 });
