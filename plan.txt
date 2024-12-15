@@ -1,0 +1,10 @@
+SnackBagGeoguesser
+
+Main page
+- Game screenshots with description
+- "Play" button ("Login to play" or "Play as guest" for the ones who are not logged in)
+- "Login/Register" button for not logged-in users (Name and XP for users who are logged in)
+- edit button next to name and xp (for logged-in users)
+
+Pop-up with login/register (for not logged-in users)
+Pop-up for changing character color (for logged-in users)
