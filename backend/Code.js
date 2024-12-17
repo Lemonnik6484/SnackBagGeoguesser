@@ -51,5 +51,57 @@ function doPost(e) {
     switch (action) {
         case "register":
             registerUser(payload["login"], payload["password"]);
+            break;
+        default:
+            return_output(false, "Invalid action");
+    }
+}
+
+// Get functions
+
+function loginUser(login = null, password = null, token = null) {
+    if (token) {
+        Object.arguments(database).forEach((user) => {
+            if (user["token"] === token) {
+                if (isTokenExpired(user)) {
+                    return_output(false, "Session expired");
+                } else {
+                    user["token"] = generateToken();
+                    return_output(true, "Auto login successfull", {
+                        token: user["token"],
+                        avatar: user["avatar"]
+                    });
+                }
+            }
+        })
+    } else {
+        if (login && password) {
+            if (database[login].password === password) {
+                database[login]["token"] = generateToken();
+                return_output(true, "Auto login successfull", {
+                    token: database[login]["token"],
+                    avatar: database[login]["avatar"]
+                });
+            } else {
+                return_output(false, "Invalid password or login");
+            }
+        } else {
+            return_output(false, "Invalid login data");
+        }
+    }
+}
+
+function doGet(e) {
+    const action = e.parameter.action;
+    const payload = JSON.parse(e.postData.contents || "{}");
+
+    switch (action) {
+        case "login":
+            payload["token"] ?
+                loginUser(null, null, payload["token"]):
+                loginUser(payload["login"], payload["password"], null);
+            break;
+        default:
+            return_output(false, "Invalid action");
     }
 }
