@@ -57,6 +57,14 @@ declare var DriveApp: {
     getFileById: (fileId: string) => GoogleAppsScript.Drive.File;
 };
 
+declare var Utilities: {
+    /**
+     * Returns UUID.
+     * @returns {string} The folder with the given ID.
+     */
+    getUuid: () => string;
+};
+
 declare namespace GoogleAppsScript.Drive {
     interface Folder {
         createFile: (name: string, content: string, mimeType: string) => GoogleAppsScript.Drive.File;
@@ -69,20 +77,12 @@ declare namespace GoogleAppsScript.Drive {
         getId: () => string;
         getName: () => string;
         getMimeType: () => string;
+        getBlob: () => GoogleAppsScript.Base.Blob;
     }
 
     interface FileIterator {
         hasNext: () => boolean;
         next: () => GoogleAppsScript.Drive.File;
-    }
-}
-
-declare namespace GoogleAppsScript.Drive {
-    interface File {
-        getId: () => string;
-        getName: () => string;
-        getMimeType: () => string;
-        getBlob: () => GoogleAppsScript.Base.Blob;
     }
 }
 
