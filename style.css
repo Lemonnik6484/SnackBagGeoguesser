@@ -4,6 +4,10 @@
     --third-color: #bf4f00;
     --main-bg-color: #000000;
     --secondary-bg-color: #001824;
+
+    --success-color: rgba(0, 255, 0, 0.75);
+    --warning-color: rgba(255, 191, 0, 0.75);
+    --error-color: rgba(255, 0, 0, 0.75);
   }
   
 
@@ -18,29 +22,6 @@ body {
     width: 100vw;
 }
 
-#mainpage-body {
-    background-image: url("./sky_full_of_stars.png");
-}
-
-#notmainpage-body {
-    background-image: url("../sky_full_of_stars.png");
-}
-
-canvas {
-    display: block;
-}
-
-#canvas {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-}
-
-.flex-start {
-    align-items: flex-start !important;
-}
-
 header {
     background-color: var(--secondary-bg-color);
     box-shadow: inset 0px -10px 10px 0px var(--main-bg-color);
@@ -51,92 +32,41 @@ header {
     align-items: center;
 }
 
-#logo {
-    height: 100px;
-    width: 400px;
-    margin-bottom: 12px;
-    margin-left: 15px;
-}
-
-#account-data {
-    display: flex;
-    flex-direction: row;
-    margin-bottom: 12px;
-    margin-right: 15px;
-    user-select: none;
-}
-
-a {
-    text-decoration: none;
-    color: unset;
-}
-
-#login-mainpage-link {
-    text-decoration: none;
-    color: rgb(0, 0, 0);
-}
-
-#login-mainpage-button {
-    border-radius: 50px;
-    width: 100px;
-    background: linear-gradient(135deg, var(--main-color), var(--secondary-color));
-    font-family: "Funnel Display", sans-serif;
-    text-align: center;
-}
-
-#central-menu {
-    display: flex;
-    justify-items: center;
-    flex-direction: column;
-}
-
-#character {
-    height: 512px;
-    width: 512px;
-    filter: drop-shadow(0px 0px 10px #ffffff);
-}
-
-#play-button {
-    color: #fff;
-    text-align: center;
-}
-
-#login-window {
-    background-color: var(--main-color);
-    text-align: center;
-    font-family: "Funnel Display", sans-serif;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-evenly;
-    height: 300px;
-    width: 250px;
-    background: linear-gradient(125deg, var(--third-color), var(--main-color), var(--secondary-color));
-    border-radius: 15px;
-    align-items: center;
-}
-
-#login-title {
-    margin: 0;
-    font-size: x-large;
-}
-
-#login-form {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: space-between;
-    height: 100px;
-}
-
-#login-form input {
-    width: 100px;
-}
-
-#login-switch {
-    user-select: none;
-}
-
 .notification {
     font-family: "Funnel Display", sans-serif;
-    border: #00000048 solid 3px;
+    bottom: 20px;
+    right: 20px;
+    position: fixed;
+    width: 200px;
+    height: 75px;
+    border: #00000048 solid 5px;
+    z-index: 1000;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+    border-radius: 5px;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.5s, transform 0.5s;
+    color: #fff;
+}
+
+.notification.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.notification.hide {
+    opacity: 0;
+    transform: translateY(-20px);
+}
+
+.notification.success {
+    background-color: var(--success-color);
+}
+
+.notification.warning {
+    background-color: var(--warning-color);
+}
+
+.notification.error {
+    background-color: var(--error-color);
 }

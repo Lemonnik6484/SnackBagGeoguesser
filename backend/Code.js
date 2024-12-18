@@ -44,6 +44,23 @@ function registerUser(login, password) {
     }
 }
 
+function updateAvatar(token, color) {
+    if (token) {
+        Object.arguments(database).forEach((user) => {
+            if (user["token"] === token) {
+                if (isTokenExpired(user)) {
+                    return_output(false, "Session expired");
+                } else {
+                    user["avatar"] = color;
+                    return_output(true, "Avatar color changed");
+                }
+            }
+        })
+    } else {
+        return_output(false, "Invalid request");
+    }
+}
+
 function doPost(e) {
     const action = e.parameter.action;
     const payload = JSON.parse(e.postData.contents || "{}");
@@ -51,6 +68,9 @@ function doPost(e) {
     switch (action) {
         case "register":
             registerUser(payload["login"], payload["password"]);
+            break;
+        case "update-avatar":
+            updateAvatar(payload["token"], payload["color"]);
             break;
         default:
             return_output(false, "Invalid action");
@@ -63,12 +83,11 @@ function loginUser(login = null, password = null, token = null) {
     if (token) {
         Object.arguments(database).forEach((user) => {
             if (user["token"] === token) {
+                user["tokenExpirationDate"] = new Date().getTime() + TOKEN_EXPIRATION_TIME;
                 if (isTokenExpired(user)) {
                     return_output(false, "Session expired");
                 } else {
-                    user["token"] = generateToken();
                     return_output(true, "Auto login successfull", {
-                        token: user["token"],
                         avatar: user["avatar"]
                     });
                 }
@@ -79,7 +98,6 @@ function loginUser(login = null, password = null, token = null) {
             if (database[login].password === password) {
                 database[login]["token"] = generateToken();
                 return_output(true, "Auto login successfull", {
-                    token: database[login]["token"],
                     avatar: database[login]["avatar"]
                 });
             } else {
