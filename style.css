@@ -47,6 +47,9 @@ header {
     transform: translateY(20px);
     transition: opacity 0.5s, transform 0.5s;
     color: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .notification.show {

@@ -26,7 +26,7 @@ function isTokenExpired(user) {
 function registerUser(login, password) {
     if (login && password) {
         if (database[login]) {
-            return_output(false, "Account already exists");
+            return return_output(false, "Account already exists");
         } else {
             const uuid = generateUuid();
             const token = generateUuid();
@@ -38,10 +38,10 @@ function registerUser(login, password) {
                 token: token,
                 tokenExpirationDate: tokenExpireDate
             }
-            return_output(true, "Account created successfully", {token: database[login].token});
+            return return_output(true, "Account created successfully", {token: database[login].token});
         }
     } else {
-        return_output(false, "Invalid request");
+        return return_output(false, "Invalid request");
     }
 }
 
@@ -50,15 +50,16 @@ function changeAvatar(token, color) {
         Object.arguments(database).forEach((user) => {
             if (user["token"] === token) {
                 if (isTokenExpired(user)) {
-                    return_output(false, "Session expired");
+                    return return_output(false, "Session expired");
                 } else {
                     user["avatar"] = color;
-                    return_output(true, "Avatar color changed");
+                    return return_output(true, "Avatar color changed");
                 }
             }
-        })
+        });
+        
     } else {
-        return_output(false, "Invalid request");
+        return return_output(false, "Invalid request");
     }
 }
 
@@ -67,9 +68,9 @@ function changeName(token, name) {
         Object.arguments(database).forEach((user) => {
             if (user["token"] === token) {
                 if (isTokenExpired(user)) {
-                    return_output(false, "Session expired");
+                    return return_output(false, "Session expired");
                 } else {
-                    return_output(true, "Avatar color changed");
+                    return return_output(true, "Avatar color changed");
                 }
             }
         })
@@ -91,7 +92,7 @@ function doPost(e) {
             changeName(payload["token"], payload["name"]);
             break;
         default:
-            return_output(false, "Invalid action");
+            return return_output(false, "Invalid action");
     }
 }
 
@@ -103,9 +104,9 @@ function loginUser(login = null, password = null, token = null) {
             if (user["token"] === token) {
                 user["tokenExpirationDate"] = new Date().getTime() + TOKEN_EXPIRATION_TIME;
                 if (isTokenExpired(user)) {
-                    return_output(false, "Session expired");
+                    return return_output(false, "Session expired");
                 } else {
-                    return_output(true, "Auto login successfull", {
+                    return return_output(true, "Auto login successfull", {
                         avatar: user["avatar"],
                         name: user["name"]
                     });
@@ -118,17 +119,17 @@ function loginUser(login = null, password = null, token = null) {
                 if (user.login === login && user.password === password) {
                     database[user]["token"] = generateUuid();
                     database[user]["tokenExpirationDate"] = new Date().getTime() + TOKEN_EXPIRATION_TIME;
-                    return_output(true, "Login successfull", {
+                    return return_output(true, "Login successfull", {
                         avatar: database[user]["avatar"],
                         name: database[user]["name"],
                         token: database[user]["token"]
                     });
                 } else {
-                    return_output(false, "Invalid password or login");
+                    return return_output(false, "Invalid password or login");
                 }
             });
         } else {
-            return_output(false, "Invalid login data");
+            return return_output(false, "Invalid login data");
         }
     }
 }
@@ -144,6 +145,6 @@ function doGet(e) {
                 loginUser(payload["login"], payload["password"], null);
             break;
         default:
-            return_output(false, "Invalid action");
+            return return_output(false, "Invalid action");
     }
 }
