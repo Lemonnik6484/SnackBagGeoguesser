@@ -118,3 +118,10 @@ function sendNewName(token, newName) {
             showMessage("error", "Unknown error occurred")
         })
 }
+
+// ------------------------------------- //
+
+if (localStorage.getItem("token")) {
+    sendLoginToken(localStorage.getItem("token"));
+}
+
