@@ -9,7 +9,7 @@ function return_output(success, message, data = {}) {
         .setMimeType(ContentService.MimeType.JSON);
 }
 
-function generateToken() {
+function generateUuid() {
     return Utilities.getUuid();
 }
 
@@ -28,9 +28,10 @@ function registerUser(login, password) {
         if (database[login]) {
             return_output(false, "Account already exists");
         } else {
-            const token = generateToken();
+            const uuid = generateUuid();
+            const token = generateUuid();
             const tokenExpireDate = new Date().getTime() + TOKEN_EXPIRATION_TIME;
-            database[login] = {
+            database[uuid] = {
                 name: login,
                 avatar: "#ffffff",
                 password: password,
@@ -44,7 +45,7 @@ function registerUser(login, password) {
     }
 }
 
-function updateAvatar(token, color) {
+function changeAvatar(token, color) {
     if (token) {
         Object.arguments(database).forEach((user) => {
             if (user["token"] === token) {
@@ -61,6 +62,20 @@ function updateAvatar(token, color) {
     }
 }
 
+function changeName(token, name) {
+    if (token) {
+        Object.arguments(database).forEach((user) => {
+            if (user["token"] === token) {
+                if (isTokenExpired(user)) {
+                    return_output(false, "Session expired");
+                } else {
+                    return_output(true, "Avatar color changed");
+                }
+            }
+        })
+    }
+}
+
 function doPost(e) {
     const action = e.parameter.action;
     const payload = JSON.parse(e.postData.contents || "{}");
@@ -69,8 +84,11 @@ function doPost(e) {
         case "register":
             registerUser(payload["login"], payload["password"]);
             break;
-        case "update-avatar":
-            updateAvatar(payload["token"], payload["color"]);
+        case "change-avatar":
+            changeAvatar(payload["token"], payload["color"]);
+            break;
+        case "change-name":
+            changeName(payload["token"], payload["name"]);
             break;
         default:
             return_output(false, "Invalid action");
@@ -88,21 +106,27 @@ function loginUser(login = null, password = null, token = null) {
                     return_output(false, "Session expired");
                 } else {
                     return_output(true, "Auto login successfull", {
-                        avatar: user["avatar"]
+                        avatar: user["avatar"],
+                        name: user["name"]
                     });
                 }
             }
         })
     } else {
         if (login && password) {
-            if (database[login].password === password) {
-                database[login]["token"] = generateToken();
-                return_output(true, "Auto login successfull", {
-                    avatar: database[login]["avatar"]
-                });
-            } else {
-                return_output(false, "Invalid password or login");
-            }
+            Object.arguments(database).forEach((user) => {
+                if (user.login === login && user.password === password) {
+                    database[user]["token"] = generateUuid();
+                    database[user]["tokenExpirationDate"] = new Date().getTime() + TOKEN_EXPIRATION_TIME;
+                    return_output(true, "Login successfull", {
+                        avatar: database[user]["avatar"],
+                        name: database[user]["name"],
+                        token: database[user]["token"]
+                    });
+                } else {
+                    return_output(false, "Invalid password or login");
+                }
+            });
         } else {
             return_output(false, "Invalid login data");
         }
