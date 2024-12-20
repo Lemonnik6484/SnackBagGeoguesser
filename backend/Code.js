@@ -4,11 +4,6 @@ const TOKEN_EXPIRATION_TIME = 7 * 24 * 60 * 60 * 1000; // 7 days in milliseconds
 
 // Utilities
 
-function return_output(success, message, data = {}) {
-    return ContentService.createTextOutput(JSON.stringify({ success: success, message: message, data: data }))
-        .setMimeType(ContentService.MimeType.JSON);
-}
-
 function generateUuid() {
     return Utilities.getUuid();
 }
@@ -26,7 +21,8 @@ function isTokenExpired(user) {
 function registerUser(login, password) {
     if (login && password) {
         if (database[login]) {
-            return return_output(false, "Account already exists");
+            return ContentService.createTextOutput(JSON.stringify({ success: false, message: "Account already exists"}))
+                .setMimeType(ContentService.MimeType.JSON);
         } else {
             const uuid = generateUuid();
             const token = generateUuid();
@@ -38,10 +34,12 @@ function registerUser(login, password) {
                 token: token,
                 tokenExpirationDate: tokenExpireDate
             }
-            return return_output(true, "Account created successfully", {token: database[login].token});
+            return ContentService.createTextOutput(JSON.stringify({ success: true, message: "Account created successfully", token: database[login].token }))
+                .setMimeType(ContentService.MimeType.JSON);
         }
     } else {
-        return return_output(false, "Invalid request");
+        return ContentService.createTextOutput(JSON.stringify({ success: false, message: "Invalid request" }))
+            .setMimeType(ContentService.MimeType.JSON);
     }
 }
 
@@ -50,16 +48,19 @@ function changeAvatar(token, color) {
         Object.arguments(database).forEach((user) => {
             if (user["token"] === token) {
                 if (isTokenExpired(user)) {
-                    return return_output(false, "Session expired");
+                    return ContentService.createTextOutput(JSON.stringify({ success: false, message: "Session expired" }))
+                        .setMimeType(ContentService.MimeType.JSON);
                 } else {
                     user["avatar"] = color;
-                    return return_output(true, "Avatar color changed");
+                    return ContentService.createTextOutput(JSON.stringify({ success: true, message: "Avatar color changed" }))
+                        .setMimeType(ContentService.MimeType.JSON);
                 }
             }
         });
         
     } else {
-        return return_output(false, "Invalid request");
+        return ContentService.createTextOutput(JSON.stringify({ success: false, message: "Invalid request" }))
+            .setMimeType(ContentService.MimeType.JSON);
     }
 }
 
@@ -68,9 +69,11 @@ function changeName(token, name) {
         Object.arguments(database).forEach((user) => {
             if (user["token"] === token) {
                 if (isTokenExpired(user)) {
-                    return return_output(false, "Session expired");
+                    return ContentService.createTextOutput(JSON.stringify({ success: false, message: "Session expired" }))
+                        .setMimeType(ContentService.MimeType.JSON);
                 } else {
-                    return return_output(true, "Avatar color changed");
+                    return ContentService.createTextOutput(JSON.stringify({ success: true, message: "Avatar color changed" }))
+                        .setMimeType(ContentService.MimeType.JSON);
                 }
             }
         })
@@ -92,7 +95,8 @@ function doPost(e) {
             changeName(payload["token"], payload["name"]);
             break;
         default:
-            return return_output(false, "Invalid action");
+            return ContentService.createTextOutput(JSON.stringify({ success: false, message: "Invalid action" }))
+                .setMimeType(ContentService.MimeType.JSON);
     }
 }
 
@@ -104,12 +108,11 @@ function loginUser(login = null, password = null, token = null) {
             if (user["token"] === token) {
                 user["tokenExpirationDate"] = new Date().getTime() + TOKEN_EXPIRATION_TIME;
                 if (isTokenExpired(user)) {
-                    return return_output(false, "Session expired");
+                    return ContentService.createTextOutput(JSON.stringify({ success: false, message: "Session expired" }))
+                        .setMimeType(ContentService.MimeType.JSON);
                 } else {
-                    return return_output(true, "Auto login successfull", {
-                        avatar: user["avatar"],
-                        name: user["name"]
-                    });
+                    return ContentService.createTextOutput(JSON.stringify({ success: true, message: "Session continued", avatar: user["avatar"], name: user["name"] }))
+                        .setMimeType(ContentService.MimeType.JSON);
                 }
             }
         })
@@ -119,17 +122,16 @@ function loginUser(login = null, password = null, token = null) {
                 if (user.login === login && user.password === password) {
                     database[user]["token"] = generateUuid();
                     database[user]["tokenExpirationDate"] = new Date().getTime() + TOKEN_EXPIRATION_TIME;
-                    return return_output(true, "Login successfull", {
-                        avatar: database[user]["avatar"],
-                        name: database[user]["name"],
-                        token: database[user]["token"]
-                    });
+                    return ContentService.createTextOutput(JSON.stringify({ success: true, message: "Login successfull", avatar: database[user]["avatar"], name: database[user]["name"], token: database[user]["token"] }))
+                        .setMimeType(ContentService.MimeType.JSON);
                 } else {
-                    return return_output(false, "Invalid password or login");
+                    return ContentService.createTextOutput(JSON.stringify({ success: false, message: "Invalid login or password" }))
+                        .setMimeType(ContentService.MimeType.JSON);
                 }
             });
         } else {
-            return return_output(false, "Invalid login data");
+            return ContentService.createTextOutput(JSON.stringify({ success: false, message: "Invalid login data" }))
+                .setMimeType(ContentService.MimeType.JSON);
         }
     }
 }
@@ -145,6 +147,7 @@ function doGet(e) {
                 loginUser(payload["login"], payload["password"], null);
             break;
         default:
-            return return_output(false, "Invalid action");
+            return ContentService.createTextOutput(JSON.stringify({ success: false, message: "Invalid action" }))
+                .setMimeType(ContentService.MimeType.JSON);
     }
 }
