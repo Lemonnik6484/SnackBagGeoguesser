@@ -1,4 +1,4 @@
-const SCRIPT_ID = "AKfycbxqCi1m2mLp3YujFwYz4oWdPD4EL_slbqCh0_bO2QU3OsTLAfQGb7D4JrSi_E64vPcn";
+const SCRIPT_ID = "AKfycbxNH_mCrs0s08dz8WOtXUHCYwTXiDmI7w_4d0MNAZkJJRmt4Er19_F_FWc00c93g4Ws0g";
 const API = `https://script.google.com/macros/s/${SCRIPT_ID}/exec`;
 let name = "";
 let avatar = "";

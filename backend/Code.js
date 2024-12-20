@@ -24,7 +24,7 @@ function registerUser(login, password) {
             return ContentService.createTextOutput(JSON.stringify({ success: false, message: "Account already exists"}))
                 .setMimeType(ContentService.MimeType.JSON);
         } else {
-            const uuid = generateUuid();
+            const uuid = login; //uuid must be here
             const token = generateUuid();
             const tokenExpireDate = new Date().getTime() + TOKEN_EXPIRATION_TIME;
             database[uuid] = {
@@ -34,7 +34,7 @@ function registerUser(login, password) {
                 token: token,
                 tokenExpirationDate: tokenExpireDate
             }
-            return ContentService.createTextOutput(JSON.stringify({ success: true, message: "Account created successfully", token: database[login].token }))
+            return ContentService.createTextOutput(JSON.stringify({ success: true, message: "Account created successfully", token: database[uuid].token }))
                 .setMimeType(ContentService.MimeType.JSON);
         }
     } else {
