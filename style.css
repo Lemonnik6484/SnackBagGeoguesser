@@ -1,142 +1,84 @@
 :root {
     --main-color: #ffa909;
     --secondary-color: #fff3bd;
-    --third-color: #bf4f00;
-    --main-bg-color: #000000;
-    --secondary-bg-color: #001824;
-  }
-  
+    --shadow-color: #bf4f00;
+}
+
+@keyframes slowSpin {
+    from {
+        transform: translate(-50%, -50%) rotate(0deg);
+    }
+    to {
+        transform: translate(-50%, -50%) rotate(360deg);
+    }
+}
+
+@keyframes slowFloat {
+    0% {
+        transform: translate(30vw, 23%) rotate(0deg);
+    }
+
+    25% {
+        transform: translate(32vw, 25%) rotate(10deg);
+    }
+
+    50% {
+        transform: translate(30vw, 27%) rotate(0deg);
+    }
+
+    75% {
+        transform: translate(28vw, 25%) rotate(-10deg);
+    }
+
+    100% {
+        transform: translate(30vw, 23%) rotate(0deg);
+    }
+}
 
 body {
     margin: 0;
+    height: 100vh;
     overflow: hidden;
-    background-color: var(--main-bg-color);
-    background-size: cover;
-    background-repeat: no-repeat;
-    background-position: center;
-    height: 100vh;
-    width: 100vw;
+    background: black;
 }
 
-#mainpage-body {
-    background-image: url("./sky_full_of_stars.png");
-}
-
-#notmainpage-body {
-    background-image: url("../sky_full_of_stars.png");
-}
-
-canvas {
-    display: block;
-}
-
-#canvas {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-}
-
-.flex-start {
-    align-items: flex-start !important;
-}
-
-header {
-    background-color: var(--secondary-bg-color);
-    box-shadow: inset 0px -10px 10px 0px var(--main-bg-color);
-    height: 75px;
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
+body::before {
+    content: "";
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    width: 100vmax;
+    height: 100vmax;
+    background: url("./assets/bg.png") center/cover no-repeat;
+    transform: translate(-50%, -50%) rotate(0deg);
+    animation: slowSpin 360s linear infinite;
+    z-index: -1;
 }
 
 #logo {
-    height: 100px;
-    width: 400px;
-    margin-bottom: 12px;
-    margin-left: 15px;
+    position: fixed;
+    top: 50%;
+    left: 25%;
+    transform: translate(-50%, -50%);
+    width: 45vw;
+    height: auto;
 }
 
-#account-data {
-    display: flex;
-    flex-direction: row;
-    margin-bottom: 12px;
-    margin-right: 15px;
-    user-select: none;
-}
-
-a {
-    text-decoration: none;
-    color: unset;
-}
-
-#login-mainpage-link {
-    text-decoration: none;
-    color: rgb(0, 0, 0);
-}
-
-#login-mainpage-button {
-    border-radius: 50px;
-    width: 100px;
-    background: linear-gradient(135deg, var(--main-color), var(--secondary-color));
-    font-family: "Funnel Display", sans-serif;
-    text-align: center;
-}
-
-#central-menu {
-    display: flex;
-    justify-items: center;
-    flex-direction: column;
+#planet {
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    transform: translate(10%, 45%);
+    width: 45vw;
+    height: auto;
+    image-rendering: smooth;
 }
 
 #character {
-    height: 512px;
-    width: 512px;
-    filter: drop-shadow(0px 0px 10px #ffffff);
-}
-
-#play-button {
-    color: #fff;
-    text-align: center;
-}
-
-#login-window {
-    background-color: var(--main-color);
-    text-align: center;
-    font-family: "Funnel Display", sans-serif;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-evenly;
-    height: 300px;
-    width: 250px;
-    background: linear-gradient(125deg, var(--third-color), var(--main-color), var(--secondary-color));
-    border-radius: 15px;
-    align-items: center;
-}
-
-#login-title {
-    margin: 0;
-    font-size: x-large;
-}
-
-#login-form {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: space-between;
-    height: 100px;
-}
-
-#login-form input {
-    width: 100px;
-}
-
-#login-switch {
-    user-select: none;
-}
-
-.notification {
-    font-family: "Funnel Display", sans-serif;
-    border: #00000048 solid 3px;
+    position: fixed;
+    bottom: 50%;
+    right: 50%;
+    transform: translate(30vw, 25%);
+    z-index: 1;
+    animation: slowFloat 35s linear infinite;
 }
