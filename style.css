@@ -50,6 +50,8 @@ body::before {
     width: 100vmax;
     height: 100vmax;
     background: url("./assets/bg.png") center/cover no-repeat;
+    opacity: 0.9;
+    filter: brightness(2.5);
     transform: translate(-50%, -50%) rotate(0deg);
     animation: slowSpin 360s linear infinite;
     z-index: -1;
@@ -81,4 +83,61 @@ body::before {
     transform: translate(30vw, 25%);
     z-index: 1;
     animation: slowFloat 35s linear infinite;
+    animation-timing-function: cubic-bezier(0.42, 0, 0.58, 1);
+}
+
+/* main page buttons */
+#options {
+    position: fixed;
+    bottom: 25%;
+    left: 25%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+}
+
+#play-btn, #login-btn {
+    width: 200px;
+    height: 50px;
+    background: rgba(0, 0, 0, 0.50);
+    border: 1px solid var(--main-color);
+    border-radius: 50px;
+    box-shadow: 0 0 10px var(--shadow-color);
+    cursor: pointer;
+    color: var(--main-color);
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin: 10px;
+
+    transition: background 0.5s, color 0.5s;
+}
+
+#play-btn:hover, #login-btn:hover {
+    background: var(--main-color);
+    color: black;
+    transition: 0.5s;
+}
+
+#signup-btn {
+    width: 200px;
+    height: 50px;
+    background: rgba(0, 0, 0, 0.50);
+    border: 1px solid var(--secondary-color);
+    border-radius: 50px;
+    box-shadow: 0 0 10px var(--main-color);
+    cursor: pointer;
+    color: var(--secondary-color);
+    font-size: 1.5rem;
+    font-weight: 550;
+    margin: 10px;
+
+    transition: background 0.5s, color 0.5s;
+}
+
+#signup-btn:hover {
+    background: var(--secondary-color);
+    color: black;
+    transition: 0.5s;
 }

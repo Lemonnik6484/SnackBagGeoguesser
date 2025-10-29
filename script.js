@@ -1,5 +1,8 @@
+let username = '';
+
 // AUTH
 const backendUrl = 'http://localhost:8787';
+const authToken = localStorage.getItem('token');
 
 function backend(endpoint) {
     return backendUrl + endpoint;
@@ -30,8 +33,33 @@ async function login(username, password) {
     return token;
 }
 
-async function me(token) {
-    await fetch(backend('/api/me'), {
-        headers: { Authorization: token }
+async function me() {
+    if (!authToken) return;
+
+    const res = await fetch(backend('/api/me'), {
+        headers: { Authorization: authToken }
     });
+    if (res.status === 401) {
+        localStorage.removeItem('token');
+    } else if (res.status === 200) {
+        const { username } = await res.json();
+        return username;
+    } else {
+        return 'Unknown error: ' + res.status;
+    }
 }
+
+document.addEventListener('DOMContentLoaded', function() {
+    username = me();
+
+    const playBtn = document.getElementById('play-btn');
+    const loginBtn = document.getElementById('login-btn');
+    const signupBtn = document.getElementById('signup-btn');
+
+    if (username.length > 0) {
+        loginBtn.style.display = 'none';
+        signupBtn.style.display = 'none';
+    } else {
+        playBtn.style.display = 'none';
+    }
+});
