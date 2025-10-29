@@ -49,9 +49,35 @@ async function me() {
     }
 }
 
+// Utils
+function showPopup(html, title = '') {
+    const popup = document.getElementById('popup');
+    document.getElementById('popup-title').textContent = title;
+    document.getElementById('popup-body').innerHTML = html;
+    popup.classList.add('show');
+
+    popup.querySelector('.popup-close').onclick = () => popup.classList.remove('show');
+}
+
+function sendNotification(message, type = 'info') {
+    const container = document.getElementById('notifications');
+    const notif = document.createElement('div');
+    notif.className = `notification ${type}`;
+    notif.textContent = message;
+    container.appendChild(notif);
+
+    requestAnimationFrame(() => notif.classList.add('show'));
+
+    setTimeout(() => {
+        notif.classList.remove('show');
+        notif.addEventListener('transitionend', () => notif.remove());
+    }, 3000);
+}
+
 document.addEventListener('DOMContentLoaded', function() {
     username = me();
 
+    const usernameText = document.getElementById('username');
     const playBtn = document.getElementById('play-btn');
     const loginBtn = document.getElementById('login-btn');
     const signupBtn = document.getElementById('signup-btn');
@@ -59,7 +85,29 @@ document.addEventListener('DOMContentLoaded', function() {
     if (username.length > 0) {
         loginBtn.style.display = 'none';
         signupBtn.style.display = 'none';
+        usernameText.textContent = 'Logged in as ' + username;
     } else {
+        usernameText.style.display = 'none';
         playBtn.style.display = 'none';
+    }
+
+    loginBtn.onclick = function() {
+        showPopup(`
+            <form id="login-form">
+                <input type="text" id="login-username" placeholder="Username" required>
+                <input type="password" id="login-password" placeholder="Password" required>    
+                <button type="submit">Login</button>        
+            </form>
+        `);
+    }
+
+    signupBtn.onclick = function() {
+        showPopup(`
+            <form id="login-form">
+                <input type="text" id="login-username" placeholder="Username" required>
+                <input type="password" id="login-password" placeholder="Password" required>    
+                <button type="submit">Sign up</button>        
+            </form>
+        `)
     }
 });

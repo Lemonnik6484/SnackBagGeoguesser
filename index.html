@@ -19,12 +19,25 @@
     <meta content="#48c9b0" data-react-helmet="true" name="theme-color"/>
 </head>
 <body>
+    <!-- Popup HTML -->
+    <div id="popup" class="popup">
+        <div class="popup-content">
+            <h2 id="popup-title"></h2>
+            <div id="popup-body"></div>
+            <button class="popup-close">x</button>
+        </div>
+    </div>
+
+    <!-- Notification container -->
+    <div id="notifications"></div>
+
     <img id="logo" src="./assets/logo.png" alt="SNACKA GUESSR">
 
     <img id="character" src="./assets/snack.png" alt="Snack">
 
     <img id="planet" src="./assets/planet.png" alt="Planet">
 
+    <p id="username">Logged in as ...</p>
     <div id="options">
         <button id="play-btn" class="option" value="play">Play</button>
         <button id="login-btn" class="option" value="login">Log in</button>
