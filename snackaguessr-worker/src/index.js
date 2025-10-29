@@ -70,7 +70,7 @@ async function signup(request, env) {
 			'INSERT INTO sessions (user_id, token, created_at) VALUES (?, ?, ?)'
 		).bind(user.id, token, now).run();
 
-		return cors(Response.json({ token }));
+		return cors(Response.json({ token, status: 200, statusText: 'Logged in successfully' }));
 		/* LOGIN END */
 	} catch {
 		return cors(new Response(null, { status: 409, statusText: 'User exists' }));
@@ -95,7 +95,7 @@ async function login(request, env) {
 		'INSERT INTO sessions (user_id, token, created_at) VALUES (?, ?, ?)'
 	).bind(user.id, token, now).run();
 
-	return cors(Response.json({ token }));
+	return cors(Response.json({ token, status: 200, statusText: 'Logged in successfully' }));
 }
 
 async function me(request, env) {
@@ -109,5 +109,5 @@ async function me(request, env) {
 	).bind(token).first();
 
 	if (!session) return cors(new Response(null, { status: 401, statusText: 'Invalid token' }));
-	return cors(Response.json(session));
+	return cors(Response.json(session, { status: 200, statusText: 'Session continued' }));
 }
