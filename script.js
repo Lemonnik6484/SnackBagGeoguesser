@@ -45,6 +45,7 @@ async function me() {
         headers: { Authorization: authToken }
     });
     if (res.status === 401) {
+        Username = '';
         localStorage.removeItem('token');
         return res;
     } else if (res.status === 200) {
