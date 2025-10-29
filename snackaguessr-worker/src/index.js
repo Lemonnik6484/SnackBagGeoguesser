@@ -1,91 +1,89 @@
-import { sha256 } from "crypto-hash";
-
-async function createJWT(payload, secret) {
-	const encoder = new TextEncoder();
-	const header = btoa(JSON.stringify({ alg: "HS256", typ: "JWT" }));
-	const body = btoa(JSON.stringify(payload));
-	const data = `${header}.${body}`;
-	const key = await crypto.subtle.importKey(
-		"raw",
-		encoder.encode(secret),
-		{ name: "HMAC", hash: "SHA-256" },
-		false,
-		["sign"]
-	);
-	const signature = await crypto.subtle.sign("HMAC", key, encoder.encode(data));
-	const sigBase64 = btoa(String.fromCharCode(...new Uint8Array(signature)));
-	return `${data}.${sigBase64}`;
-}
-
-async function verifyJWT(token, secret) {
-	try {
-		const [header, body, sig] = token.split(".");
-		const encoder = new TextEncoder();
-		const key = await crypto.subtle.importKey(
-			"raw",
-			encoder.encode(secret),
-			{ name: "HMAC", hash: "SHA-256" },
-			false,
-			["verify", "sign"]
-		);
-		const signatureCheck = await crypto.subtle.sign("HMAC", key, encoder.encode(`${header}.${body}`));
-		const sigBase64 = btoa(String.fromCharCode(...new Uint8Array(signatureCheck)));
-		if (sigBase64 !== sig) return null;
-		return JSON.parse(atob(body));
-	} catch {
-		return null;
-	}
-}
+import { sha256 } from 'crypto-hash';
 
 export default {
 	async fetch(request, env) {
 		const url = new URL(request.url);
-		const { users_db } = env;
+		const { pathname } = url;
 
-		// SIGNUP
-		if (url.pathname === "/api/signup" && request.method === "POST") {
-			const { username, password } = await request.json();
-			const hash = await sha256(password);
+		if (pathname === '/api/setup' && request.method === 'POST')
+			return setup(request, env);
+		if (pathname === '/api/signup' && request.method === 'POST')
+			return signup(request, env);
+		if (pathname === '/api/login' && request.method === 'POST')
+			return login(request, env);
+		if (pathname === '/api/me' && request.method === 'GET')
+			return me(request, env);
 
-			try {
-				await users_db.prepare("INSERT INTO users (username, password_hash) VALUES (?, ?)")
-					.bind(username, hash)
-					.run();
-				return new Response("Signup success", { status: 200 });
-			} catch {
-				return new Response("Username taken", { status: 400 });
-			}
-		}
-
-		// LOGIN
-		if (url.pathname === "/api/login" && request.method === "POST") {
-			const { username, password } = await request.json();
-			const user = await users_db.prepare("SELECT * FROM users WHERE username = ?")
-				.bind(username)
-				.first();
-			const hash = await sha256(password);
-
-			if (!user || user.password_hash !== hash) {
-				return new Response("Invalid credentials", { status: 401 });
-			}
-
-			const token = await createJWT({ username }, env.SECRET);
-			return new Response(JSON.stringify({ token }), {
-				headers: { "Content-Type": "application/json" }
-			});
-		}
-
-		// WHOIAM
-		if (url.pathname === "/api/me") {
-			const auth = request.headers.get("Authorization");
-			if (!auth?.startsWith("Bearer ")) return new Response("No token", { status: 401 });
-
-			const payload = await verifyJWT(auth.slice(7), env.SECRET);
-			if (!payload) return new Response("Invalid token", { status: 401 });
-
-			return new Response(JSON.stringify(payload), { headers: { "Content-Type": "application/json" } });
-		}
-
-		return new Response("Not found", { status: 404 });
+		return cors(new Response('Not found', { status: 404 }));
 	}
 };
+
+function cors(response) {
+	response.headers.set("Access-Control-Allow-Origin", "*");
+	response.headers.set("Access-Control-Allow-Headers", "*");
+	response.headers.set("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+	return response;
+}
+
+async function setup(request, env) {
+	try {
+		await env.users_db.exec(`CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT UNIQUE NOT NULL, password TEXT NOT NULL);`);
+
+		await env.users_db.exec(`CREATE TABLE IF NOT EXISTS sessions (id INTEGER PRIMARY KEY AUTOINCREMENT, user_id INTEGER NOT NULL, token TEXT UNIQUE NOT NULL, created_at INTEGER NOT NULL, FOREIGN KEY(user_id) REFERENCES users(id));`);
+
+		return new Response('Tables created or already exist', { status: 200 });
+	} catch (err) {
+		return new Response('DB setup error: ' + err.message, { status: 500 });
+	}
+}
+
+async function signup(request, env) {
+	const { username, password } = await request.json();
+	if (!username || !password)
+		return cors(new Response('Missing fields', { status: 400 }));
+
+	const hashed = await sha256(password);
+	try {
+		await env.users_db.prepare(
+			'INSERT INTO users (username, password) VALUES (?, ?)'
+		).bind(username, hashed).run();
+		return cors(new Response('OK', { status: 200 }));
+	} catch {
+		return cors(new Response('User exists', { status: 409 }));
+	}
+}
+
+async function login(request, env) {
+	const { username, password } = await request.json();
+	if (!username || !password)
+		return cors(new Response('Missing fields', { status: 400 }));
+
+	const hashed = await sha256(password);
+	const user = await env.users_db.prepare(
+		'SELECT * FROM users WHERE username = ? AND password = ?'
+	).bind(username, hashed).first();
+
+	if (!user) return cors(new Response('Invalid credentials', { status: 401 }));
+
+	const token = crypto.randomUUID();
+	const now = Date.now();
+	await env.users_db.prepare(
+		'INSERT INTO sessions (user_id, token, created_at) VALUES (?, ?, ?)'
+	).bind(user.id, token, now).run();
+
+	return cors(Response.json({ token }));
+}
+
+async function me(request, env) {
+	const token = request.headers.get('Authorization');
+	if (!token) return cors(new Response('Unauthorized', { status: 401 }));
+
+	const session = await env.users_db.prepare(
+		`SELECT users.username
+     FROM sessions JOIN users ON sessions.user_id = users.id
+     WHERE token = ?`
+	).bind(token).first();
+
+	if (!session) return cors(new Response('Invalid token', { status: 401 }));
+	return cors(Response.json(session));
+}
