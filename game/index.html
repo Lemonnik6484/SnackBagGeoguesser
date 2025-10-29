@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SnackBag GeoGuesser</title>
+    <link rel="stylesheet" href="../style.css">
+
+    <!--OpenGraphProtocol-->
+    <meta content="SnackaGuessr" property="og:title"/>
+    <meta content="This is Geoguesser like game with SnackBag locations" property="og:description"/>
+    <meta property="og:image" content="/assets/preview.png?v=1"/>
+    <meta content="#48c9b0" data-react-helmet="true" name="theme-color"/>
+
+    <!--Three.js-->
+    <script src="https://unpkg.com/three@0.160.0/build/three.min.js"></script>
+</head>
+<style>
+    /* full-screen canvas */
+    html,body { height:100%; margin:0; background:#111; color:#ddd; font-family:Inter,Arial,sans-serif; }
+    #app { width:100%; height:100%; position:relative; overflow:hidden; }
+    canvas { display:block; width:100%; height:100%; }
+    /* small UI hint */
+    .hint {
+        position: absolute;
+        left: 12px;
+        bottom: 12px;
+        background: rgba(0,0,0,0.4);
+        padding:8px 10px;
+        border-radius:8px;
+        font-size:13px;
+        color:#eee;
+        backdrop-filter: blur(4px);
+    }
+</style>
+<body>
+    <div id="notifications"></div>
+
+    <div id="app"></div>
+
+    <script src="./script.js"></script>
+</body>
+</html>
