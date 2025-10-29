@@ -1,8 +1,8 @@
-let username = '';
+let Username = '';
 
 // AUTH
 const backendUrl = 'http://localhost:8787';
-const authToken = localStorage.getItem('token');
+let authToken = localStorage.getItem('token');
 
 function backend(endpoint) {
     return backendUrl + endpoint;
@@ -14,12 +14,12 @@ async function signup(username, password) {
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({username: username, password: password})
     });
-    if (res.status === 409) {
-        return 'User exists';
-    } else if (res.status === 200) {
-        return 'OK';
+    if (res.status === 200) {
+        const {token} = await res.json();
+        localStorage.setItem('token', token);
+        return res;
     } else {
-        return 'Unknown error: ' + res.status;
+        return res;
     }
 }
 
@@ -29,8 +29,13 @@ async function login(username, password) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username: username, password: password })
     });
-    const { token } = await res.json();
-    return token;
+    if (res.status === 200) {
+        const { token } = await res.json();
+        localStorage.setItem('token', token);
+        return res;
+    } else {
+        return res;
+    }
 }
 
 async function me() {
@@ -41,11 +46,13 @@ async function me() {
     });
     if (res.status === 401) {
         localStorage.removeItem('token');
+        return res;
     } else if (res.status === 200) {
         const { username } = await res.json();
-        return username;
+        Username = username;
+        return res;
     } else {
-        return 'Unknown error: ' + res.status;
+        return res;
     }
 }
 
@@ -57,6 +64,8 @@ function showPopup(html, title = '') {
     popup.classList.add('show');
 
     popup.querySelector('.popup-close').onclick = () => popup.classList.remove('show');
+
+    return popup;
 }
 
 function sendNotification(message, type = 'info') {
@@ -74,40 +83,81 @@ function sendNotification(message, type = 'info') {
     }, 3000);
 }
 
-document.addEventListener('DOMContentLoaded', function() {
-    username = me();
+async function load() {
+    authToken = localStorage.getItem('token');
+
+    await me().then();
 
     const usernameText = document.getElementById('username');
     const playBtn = document.getElementById('play-btn');
     const loginBtn = document.getElementById('login-btn');
     const signupBtn = document.getElementById('signup-btn');
 
-    if (username.length > 0) {
+    if (Username.length > 0) {
+        usernameText.textContent = 'Logged in as ' + Username;
+        playBtn.style.display = 'block';
         loginBtn.style.display = 'none';
         signupBtn.style.display = 'none';
-        usernameText.textContent = 'Logged in as ' + username;
     } else {
         usernameText.style.display = 'none';
         playBtn.style.display = 'none';
+        loginBtn.style.display = 'block';
+        signupBtn.style.display = 'block';
     }
 
-    loginBtn.onclick = function() {
-        showPopup(`
+    loginBtn.onclick = function () {
+        let popup = showPopup(`
             <form id="login-form">
                 <input type="text" id="login-username" placeholder="Username" required>
                 <input type="password" id="login-password" placeholder="Password" required>    
                 <button type="submit">Login</button>        
             </form>
         `);
+
+        const form = document.getElementById('login-form');
+        form.onsubmit = (e) => {
+            e.preventDefault();
+            const usr = document.getElementById('login-username').value;
+            const pass = document.getElementById('login-password').value;
+            login(usr, pass).then(r => {
+                if (r.status === 200) {
+                    sendNotification(r.statusText, 'success');
+                    popup.classList.remove('show');
+                    load();
+                } else {
+                    sendNotification(r.statusText, 'error');
+                }
+            });
+        };
     }
 
-    signupBtn.onclick = function() {
-        showPopup(`
+    signupBtn.onclick = function () {
+        let popup = showPopup(`
             <form id="login-form">
                 <input type="text" id="login-username" placeholder="Username" required>
                 <input type="password" id="login-password" placeholder="Password" required>    
                 <button type="submit">Sign up</button>        
             </form>
         `)
+
+        const form = document.getElementById('login-form');
+        form.onsubmit = (e) => {
+            e.preventDefault();
+            const usr = document.getElementById('login-username').value;
+            const pass = document.getElementById('login-password').value;
+            signup(usr, pass).then(r => {
+                if (r.status === 200) {
+                    sendNotification(r.statusText, 'success');
+                    popup.classList.remove('show');
+                    load();
+                } else {
+                    sendNotification(r.statusText, 'error');
+                }
+            });
+        };
     }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    load().then();
 });

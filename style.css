@@ -231,6 +231,7 @@ body::before {
     justify-content: center;
     align-items: center;
 }
+
 #login-form input {
     margin-bottom: 10px;
     background-color: wheat;
@@ -239,6 +240,7 @@ body::before {
     height: 30px;
     width: 250px
 }
+
 #login-form button {
     background-color: wheat;
     border: 3px solid transparent;
@@ -247,4 +249,13 @@ body::before {
     display: flex;
     width: fit-content;
     align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.5s, color 0.5s;
+}
+
+#login-form button:hover {
+    background-color: var(--main-color);
+    color: black;
+    transition: 0.5s;
 }
