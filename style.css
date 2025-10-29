@@ -66,25 +66,33 @@ body::before {
     height: auto;
 }
 
-#planet {
+#planet-container {
     position: fixed;
     bottom: 0;
     right: 0;
     transform: translate(10%, 45%);
     width: 45vw;
     height: auto;
+}
+
+#planet {
+    width: 100%;
+    height: auto;
     image-rendering: smooth;
 }
 
 #character {
-    position: fixed;
-    bottom: 50%;
-    right: 50%;
-    transform: translate(30vw, 25%);
+    position: absolute;
+    bottom: 105%;
+    left: -65%;
+    transform: translateX(-50%);
     z-index: 1;
+    width: 20vw;
+    height: auto;
     animation: slowFloat 35s linear infinite;
     animation-timing-function: cubic-bezier(0.42, 0, 0.58, 1);
 }
+
 
 /* main page buttons */
 #options {
@@ -122,6 +130,8 @@ body::before {
     font-weight: bold;
     margin: 10px;
 
+    display: none;
+
     transition: background 0.5s, color 0.5s;
 }
 
@@ -143,6 +153,8 @@ body::before {
     font-size: 1.5rem;
     font-weight: 550;
     margin: 10px;
+
+    display: none;
 
     transition: background 0.5s, color 0.5s;
 }
@@ -212,6 +224,7 @@ body::before {
     opacity: 0;
     transform: translateX(100%);
     transition: all 0.3s ease;
+    font-family: 'Courier New', Courier, monospace;
 }
 
 .notification.show {
